@@ -1,0 +1,10 @@
+{
+  "name": "dksu-planning-kit",
+  "description": "Planning-only Claude Code plugin for problem framing, reference research, persona design, and task planning.",
+  "version": "0.1.0",
+  "author": {
+    "name": "dksu"
+  },
+  "keywords": ["planning", "research", "persona", "scenario", "claude-code"],
+  "license": "MIT"
+}
