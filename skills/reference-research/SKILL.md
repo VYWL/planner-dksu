@@ -6,45 +6,83 @@ version: 1.0.0
 
 # Reference Research
 
-Use this skill when the user needs strong external references before planning, designing, positioning, or implementing a feature.
+Use this skill when the user needs strong external references before planning, design direction, positioning, prioritization, or decision-heavy product work.
 This skill is proactive by default.
-Do not wait for the user to hand you reference links.
-Actively collect, compare, and interpret references from the market.
+Do not wait for the user to hand you links.
 
 ## Mission
 
-Turn vague inspiration into structured evidence.
-The output should explain not just that a product exists, but how it solves a problem, for whom, with which flow, and why its UX or business model matters.
+Turn vague inspiration into structured, decision-ready evidence.
+The output should explain not just that something exists, but how it solves a problem, for whom, through which flow, and why the pattern matters.
 
 ## Mandatory Opening Questions
 
-Always ask these two questions early, even if you will research independently:
+Always ask these two questions early, even if you will continue with proactive research:
 
 1. 어떤 서비스를 참고하시나요?
 2. 마음에 드는 앱이나 웹사이트 있으세요?
 
-If the user has no answer, continue anyway with proactive research.
+If the user has no answer, continue anyway.
 
 ## Packaged Helper
 
 Use `scripts/reference-capture-checklist.md` as the deterministic capture helper for each research pass.
 It keeps per-reference notes, cross-source synthesis, and final Keep / Adapt / Avoid output consistent.
 
+## Reference Operating System
+
+`references/` is the **home of the reference layer**.
+It is not helper text and not a side note.
+It is the routing brain for this skill.
+
+Treat the reference layer as three tiers:
+
+### 1. Platform-first branches
+- `twitter.md`
+- `naver.md`
+- `media.md`
+- `public-api.md`
+- `json-api.md`
+
+Use these when the input surface already suggests a specific platform or structured data family.
+
+### 2. Generic fallback and escalation branches
+- `fallback.md`
+- `tls-impersonate.md`
+- `playwright.md`
+- `cache-archive.md`
+
+Use these when the surface is blocked, ambiguous, challenge-heavy, or historically recoverable only.
+
+### 3. Support-layer branches
+- `metadata.md`
+- `rss.md`
+- `jina.md`
+
+Use these to enrich, validate, or downgrade partial evidence.
+
 ## Core Rule
 
 Research depth must be functional, not decorative.
 
 ### Too shallow
-
 - Product X has a dashboard.
 - Product Y supports team sharing.
 - Competitor Z uses cards.
 
 ### Deep enough
-
 - Product X solves onboarding hesitation with a three-step setup wizard, progressive disclosure, and a pre-filled starter state that reduces blank-screen anxiety.
 - Product Y solves repeated coordination pain with a shared timeline, activity feed, and role-specific reminders.
 - Competitor Z uses cards only in discovery; the core workflow switches to a dense table because users optimize for scan speed after week one.
+
+## Planning Boundary
+
+This skill remains planning-oriented.
+
+- The reference layer is **routing knowledge**, not a dependency bundle.
+- Do not turn public APIs, browser tactics, reader tactics, or anti-block tactics into mandatory runtime requirements.
+- Do not drift into implementation or coding-plugin behavior.
+- Use the references to choose the right research branch, explain confidence, and preserve provenance.
 
 ## Required Source Categories
 
@@ -53,13 +91,12 @@ One source is never enough.
 
 | Source | Why it matters | Minimum expectation |
 | --- | --- | --- |
-| UI Bowl | Useful for UI patterns and polished interaction ideas | Scan for layout and pattern similarities |
-| Dribbble | Useful for visual direction and component motifs | Use carefully; validate against real-world product behavior |
-| Behance | Useful for broader product narratives and flows | Extract actual sequence ideas, not just visuals |
 | Competitor apps | Best for real production decisions | Inspect real flows, pricing, positioning, and constraints |
+| Official pages | Best for source-of-truth claims | Check current messaging, docs, pricing, or release notes |
 | Product Hunt | Good for product framing and perceived differentiation | Note messaging, launch angle, and user comments |
 | Similar services | Good for adjacent domain patterns | Compare workflows that solve the same job differently |
 | Web search | Good for real implementations, case studies, and reviews | Find evidence of actual UX behavior and adoption |
+| Visual inspiration sources | Useful for UI direction only when cross-validated | Never treat concept shots as production truth by default |
 
 ## Visual Reference Mandate
 
@@ -83,7 +120,7 @@ Example:
 
 Conclusion: do not recommend the floating panel as a default state without evidence that it supports usability in production.
 
-## Research Workflow
+## Reference-Driven Workflow
 
 ### Step 1: Frame the user problem
 
@@ -95,25 +132,59 @@ Template:
 Users need to [goal] despite [constraint] so they can [outcome].
 ```
 
-### Step 2: Clarify inspiration and domain anchors
+### Step 2: Classify the input and choose the first branch
 
-Ask the user for preferred references.
-Then infer three search lanes:
+Classify the request first:
+- `URL`
+- `handle`
+- `keyword`
+- `mixed`
 
-1. direct competitors
+Then classify the surface:
+- X / Twitter
+- Naver / Korean discovery
+- media
+- public API platform
+- JSON-capable platform
+- feed-friendly source
+- generic public page
+- blocked or challenge-heavy page
+- deleted or historical source
+
+Choose the first reference branch explicitly.
+
+| Input / surface | Read first | Add next when needed |
+| --- | --- | --- |
+| X handle / tweet URL / X keyword | `twitter.md` | `fallback.md`, `metadata.md`, `cache-archive.md` |
+| Korean keyword / Naver domain | `naver.md` | `rss.md`, `metadata.md`, `fallback.md` |
+| media URL / channel / stream | `media.md` | `metadata.md`, `fallback.md` |
+| known public API platform | `public-api.md` | `metadata.md`, `fallback.md` |
+| known JSON-capable site or `.json` surface | `json-api.md` | `public-api.md`, `metadata.md`, `fallback.md` |
+| feed-friendly root / news / blog / release stream | `rss.md` | `jina.md`, `metadata.md`, `fallback.md` |
+| generic public article or docs URL | `fallback.md` | `jina.md`, `metadata.md`, `rss.md` |
+| partial HTML or metadata-rich page | `metadata.md` | `jina.md`, `fallback.md` |
+| blocked page / WAF / challenge signal | `fallback.md` | `tls-impersonate.md`, `playwright.md`, `cache-archive.md` |
+| deleted / historical / cached need | `cache-archive.md` | `fallback.md`, `public-api.md` |
+
+### Step 3: Plan the evidence lanes
+
+After selecting the first reference branch, define at least three research lanes when the task is decision-heavy:
+
+1. direct competitors or direct evidence
 2. adjacent workflow analogs
-3. visual inspiration sources
+3. visual or behavioral evidence
 
-### Step 3: Collect references proactively
+If the task is simpler, use fewer lanes but still name the branch choice explicitly.
+
+### Step 4: Collect references proactively
 
 Do not wait for permission after the task is given.
 Search immediately.
 Aim for diversity across product maturity, business model, and UX philosophy.
 
-### Step 4: Capture evidence in structured notes
+### Step 5: Capture evidence in structured notes
 
 For each reference, document:
-
 - product name
 - source type
 - link or retrieval context
@@ -125,22 +196,70 @@ For each reference, document:
 - visual notes
 - pricing or packaging signal
 - technical hints if visible
+- reference branch used
 
-### Step 5: Compare patterns across sources
+### Step 6: Add support-layer enrichment
 
-Look for repetition and contrast.
+Use support references deliberately:
 
-Questions to answer:
+- `metadata.md` when structured signals can rescue partial access
+- `rss.md` when recency, feed discovery, or low-cost list retrieval matters
+- `jina.md` when a lightweight public read may be enough
 
-- Which flow repeats across 3 or more products?
-- Which feature is common but executed differently?
-- Which visual pattern looks attractive but is unsupported in production?
-- Which pricing strategy aligns with product maturity or target segment?
+Support evidence must not be overstated as full understanding.
 
-### Step 6: Produce findings, not a dump
+### Step 7: Escalate deterministically
+
+Escalate only when the evidence justifies it.
+
+- `fallback.md` for generic ordering and validation logic
+- `tls-impersonate.md` when the page appears public but blocked by anti-bot posture
+- `playwright.md` when the surface appears browser-required or JS-heavy
+- `cache-archive.md` when the source is stale, gone, or historically recoverable only
+
+If the real boundary is authentication, subscription, or private access, stop and report the boundary clearly.
+
+### Step 8: Produce findings, not a dump
 
 Summarize insights into decisions.
-The output must help the next step: planning, design, or implementation.
+The output must help the next step: planning, design, prioritization, or policy.
+
+## Quick vs Deep Behavior
+
+### Quick mode
+
+Use quick mode when the task is mainly:
+- fact check
+- URL or handle verification
+- shortlist generation
+- 1~2 reference comparison
+- information confirmation without recommendation-heavy judgment
+
+Quick mode still requires:
+1. explicit first-branch selection
+2. at least 2 search paths
+3. provenance on core claims
+4. failure transparency
+
+### Deep mode
+
+Escalate to deep mode when any apply:
+1. why / tradeoff / recommendation is required
+2. comparison target is 3 or more
+3. evidence conflicts
+4. single-source conclusion is risky
+5. output will influence policy / design / prioritization
+6. the user needs pattern explanation, not only fact lookup
+
+Deep mode must **explicitly consume the reference layer**.
+It is incomplete if it searches broadly without naming the first reference and the support or escalation references used.
+
+Deep mode minimum behavior:
+1. classify the input and surface
+2. name the first reference consulted
+3. name support and escalation references used
+4. explain why the route fits the surface
+5. preserve provenance and failure transparency
 
 ## Deep-Dive Extraction Framework
 
@@ -151,7 +270,6 @@ For every strong reference, write findings in this form:
 ```
 
 Examples:
-
 - Linear solves issue triage for product teams with keyboard-first workflows using inbox-like prioritization and command-driven navigation.
 - Notion solves flexible knowledge capture for mixed-skill teams with block editing using progressive complexity and page-as-container mental models.
 - Duolingo solves habit retention for casual learners with streaks, visible progress, and low-friction session loops.
@@ -172,7 +290,6 @@ Do not leave blanks.
 ## Design-Focused Research Additions
 
 When the output will influence design, also collect:
-
 - mood board signals from real products
 - color palette references
 - typography references
@@ -191,7 +308,7 @@ When the output will influence design, also collect:
   - Why it matters: ...
 ```
 
-## Visual Description Template
+### Visual Description Template
 
 Use this when screenshots are unavailable:
 
@@ -211,7 +328,6 @@ Use this when screenshots are unavailable:
 
 Do not fabricate internal stack details.
 Infer carefully from public signals only:
-
 - public job posts
 - framework signatures in page source
 - engineering blogs
@@ -230,6 +346,12 @@ Always return findings in a decision-ready structure.
 
 ## User-Provided Anchors
 - ...
+
+## Route Used
+- Primary reference:
+- Support references:
+- Escalation references:
+- Why this route fit the surface:
 
 ## Reference Set
 1. ...
@@ -254,6 +376,9 @@ Always return findings in a decision-ready structure.
 - Keep:
 - Avoid:
 - Adapt:
+
+## Unresolved or Failure Notes
+- ...
 ```
 
 ## Search Prompts
@@ -261,7 +386,6 @@ Always return findings in a decision-ready structure.
 Use search language that seeks real implementations, not abstract inspiration.
 
 Examples:
-
 - best SaaS onboarding flow with workspace creation screenshots
 - competitor app pricing comparison for AI writing tools
 - project management timeline UX real product screenshots
@@ -285,7 +409,6 @@ Rate each reference against these dimensions:
 Good findings connect the source to a product decision.
 
 Examples:
-
 - Three competitors gate collaboration behind invitation because empty shared spaces confuse single-user evaluators; for our MVP, single-player first and invite later is likely lower friction.
 - The most trusted finance apps use restrained color and dense tables after onboarding, while acquisition pages stay bright and benefit-led; split-brand behavior may be appropriate.
 - Similar services consistently keep pricing simple until users understand core value; complex usage-based pricing appears later in mature platforms.
@@ -296,7 +419,6 @@ If research reveals two clearly different strategic directions, return both.
 Do not silently choose one.
 
 Example:
-
 - Direction A: premium expert workflow, high density, keyboard-first
 - Direction B: friendly mainstream workflow, guided, lower density
 
@@ -305,8 +427,11 @@ Explain which references support each direction.
 ## Anti-Patterns (NEVER)
 
 - Never wait passively for reference links if the task already implies market or UX research.
+- Never treat `references/` as optional helper text.
+- Never skip branch selection when the surface clearly matches a platform-first reference.
 - Never rely on a single source, single screenshot, or single competitor to justify a decision.
 - Never report only that a feature exists without explaining the problem, flow, and UX pattern behind it.
 - Never use Dribbble or Behance shots as production truth without checking real-world products or adjacent evidence.
 - Never begin design recommendations without at least 3 visual references or equally concrete visual descriptions.
 - Never return a raw link dump when the task requires structured findings and actionable interpretation.
+- Never present runtime tactics as plugin requirements; preserve them only as routing knowledge.

@@ -1,5 +1,7 @@
 # dksu-planning-kit
 
+[한국어 README](./README.ko.md)
+
 A planning OS for Claude Code. Not a coding plugin.
 
 This plugin handles the "what and why" before any implementation starts: problem framing, user research, persona design, requirement structuring, and validation planning. It stops at the planning boundary and hands off a complete, decision-logged plan.
@@ -13,7 +15,7 @@ This plugin handles the "what and why" before any implementation starts: problem
 | Agent | Role | Default |
 |---|---|---|
 | `dksu` | Planning orchestrator. Owns the full six-stage planning loop. | Active |
-| `researcher-dksu` | Research specialist. Runs the insane-search protocol for evidence gathering. | Active |
+| `researcher-dksu` | Research specialist. Uses the absorbed insane-search reference layer for surface-aware evidence gathering. | Active |
 | `designer-dksu` | Product designer. Produces UX specs and design direction. | **Opt-in only** |
 
 ### Skills
@@ -45,6 +47,15 @@ Eight skeleton templates for planning artifacts:
 ### References
 
 Eight portable reference documents on planning frameworks, orchestration patterns, and research protocols. These live in `references/` and are self-contained, no vault or external links required.
+
+### researcher-dksu, upgraded
+
+`researcher-dksu` no longer uses only the high-level insane-search pattern. It now routes through the absorbed reference layer under `skills/reference-research/references/`.
+
+- Supports X/Twitter, Naver/Korean discovery, media surfaces, public API or JSON-capable platforms, feed-friendly sources, generic public pages, and blocked or challenge-heavy pages.
+- In **quick mode**, it picks an initial branch and returns concise, provenance-backed confirmation.
+- In **deep mode**, it must name the first reference branch plus support or escalation branches before synthesizing findings.
+- This remains a planning-only capability: better routing knowledge and evidence handling, not a promise of runtime bypass or tool execution.
 
 ---
 
@@ -107,7 +118,7 @@ dksu로 기획 시작해줘.
 문제: 해커톤 팀이 아이디어를 빠르게 검증할 수 있는 도구가 없다.
 ```
 
-`dksu` will open Stage 1, ask clarifying questions, and walk through the six-stage loop. It delegates research to `researcher-dksu` and, if you request it, design specs to `designer-dksu`.
+`dksu` will open Stage 1, ask clarifying questions, and walk through the six-stage loop. It delegates research to `researcher-dksu`, which now chooses surface-specific reference branches before collecting evidence, and, if you request it, design specs to `designer-dksu`.
 
 For a fuller walkthrough, see `EXAMPLE_SESSION.md`.
 

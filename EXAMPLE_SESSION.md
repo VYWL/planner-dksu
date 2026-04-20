@@ -50,6 +50,30 @@ dksu로 기획 시작해줘.
   - comparison matrix
   - recommendation
 
+추가로, researcher 단계는 이제 broad comparison만 하지 않고 입력 surface에 따라 먼저 읽을 research branch를 고른다.
+
+예시:
+
+```text
+X에서 indie hacker들이 아이디어 검증을 어떻게 말하는지 보고 싶어.
+`levelsio` 같은 계정 몇 개를 보고,
+국내 쪽은 네이버/한국어 검색으로도 비슷한 흐름이 있는지 같이 비교해줘.
+```
+
+예상 동작:
+- `dksu`가 `researcher-dksu`에 위임
+- `researcher-dksu`가 입력을 `handle + keyword + Korean discovery`로 분류
+- 먼저 X/Twitter branch를 잡고 관련 계정/포스트 evidence 수집
+- 이어서 Naver/한국어 검색 branch로 국내 표현과 패턴 비교
+- 필요하면 metadata/support branch로 partial evidence 보강
+- 결과물:
+  - 어떤 surface를 먼저 읽었는지 요약
+  - 근거가 붙은 cross-source findings
+  - 국내/해외 패턴 차이
+  - unresolved items와 confidence
+
+핵심은 "검색을 넓게 많이 한다"가 아니라, **입력 surface에 맞는 branch를 먼저 고른 뒤** 조사한다는 점이다.
+
 ---
 
 ### 3. Use persona/scenario framing

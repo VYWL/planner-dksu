@@ -1,5 +1,7 @@
 # dksu-planning-kit
 
+[English README](./README.md)
+
 Claude Code용 **기획 OS**입니다. 코딩 플러그인이 아니라, 구현 전에 필요한 문제정의·레퍼런스조사·페르소나/시나리오 설계·요구사항 구조화·작업설계를 끝까지 밀어붙이는 planning bundle입니다.
 
 ---
@@ -28,7 +30,7 @@ Claude Code용 **기획 OS**입니다. 코딩 플러그인이 아니라, 구현 
 | Agent | 역할 | 기본 상태 |
 |---|---|---|
 | `dksu` | planning orchestrator | 활성 |
-| `researcher-dksu` | 근거 기반 조사 specialist | 활성 |
+| `researcher-dksu` | insane-search reference layer를 사용하는 근거 기반 조사 specialist | 활성 |
 | `designer-dksu` | UX/흐름/시각 방향 기획 | **opt-in** |
 
 ### Skills
@@ -64,6 +66,15 @@ Claude Code용 **기획 OS**입니다. 코딩 플러그인이 아니라, 구현 
 
 planning과 research에 필요한 8개 reference 문서를 self-contained 형태로 포함합니다.
 
+### 업그레이드된 researcher-dksu
+
+`researcher-dksu`는 이제 insane-search의 상위 프로토콜만 참고하지 않습니다. `skills/reference-research/references/` 아래 흡수된 reference layer를 기준으로 surface-aware routing을 수행합니다.
+
+- X/Twitter, Naver/한국어 검색, media surface, public API / JSON-capable platform, feed-friendly source, generic public page, blocked/challenge-heavy page를 구분해 접근합니다.
+- **quick mode**에서는 먼저 읽을 branch를 정하고, 짧지만 provenance가 붙은 확인 결과를 반환합니다.
+- **deep mode**에서는 첫 reference branch와 support/escalation branch를 명시한 뒤 비교·판단·추천을 정리합니다.
+- 여전히 planning-only 범위입니다. 런타임 우회나 도구 실행을 보장하는 것이 아니라, routing knowledge와 evidence handling이 강화된 것입니다.
+
 ---
 
 ## Planning Workflow
@@ -91,7 +102,7 @@ designer-dksu로 UX 명세 작성해줘
 디자이너 에이전트 써서 화면 흐름 정의해줘
 ```
 
-요청이 없으면 `dksu`와 `researcher-dksu` 중심으로 planning을 닫습니다.
+요청이 없으면 `dksu`와 `researcher-dksu` 중심으로 planning을 닫습니다. 이때 `researcher-dksu`는 입력 surface에 맞는 reference branch를 먼저 고른 뒤 근거를 수집합니다.
 
 ---
 
