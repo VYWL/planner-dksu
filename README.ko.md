@@ -106,26 +106,46 @@ designer-dksu로 UX 명세 작성해줘
 
 ---
 
-## 설치 / 사용
+## 설치
 
-### 1. 현재 standalone repo로 사용
+### 마켓플레이스 등록
 
-이 repo 자체가 standalone plugin repo입니다.
+이 저장소를 Claude Code 마켓플레이스로 등록합니다. (최초 1회)
 
-필요하면 Claude plugin 디렉토리로 복사:
-
-```bash
-cp -r ./dksu-planning-kit "$CLAUDE_PLUGIN_DIR/dksu-planning-kit"
+```text
+/plugin marketplace add VYWL/planner-dksu
 ```
 
-### 2. 시작 예시
+### 플러그인 설치
+
+등록된 마켓플레이스에서 플러그인을 설치합니다.
+
+```text
+/plugin install dksu-planning-kit@dksu-planning-kit
+/reload-plugins
+```
+
+### 로컬 테스트 (개발용)
+
+마켓플레이스 없이 로컬에서 바로 테스트할 수도 있습니다.
+
+```bash
+git clone https://github.com/VYWL/planner-dksu.git
+claude --plugin-dir ./planner-dksu
+```
+
+---
+
+## 사용
+
+### 시작 예시
 
 ```text
 dksu로 기획 시작해줘.
 문제: 해커톤 팀이 아이디어를 빠르게 검증할 수 있는 도구가 없다.
 ```
 
-### 3. 예시 세션 보기
+### 예시 세션 보기
 
 `EXAMPLE_SESSION.md` 참고
 
@@ -136,7 +156,8 @@ dksu로 기획 시작해줘.
 ```text
 dksu-planning-kit/
 ├── .claude-plugin/
-│   └── plugin.json
+│   ├── plugin.json
+│   └── marketplace.json
 ├── agents/
 ├── skills/
 ├── governance/

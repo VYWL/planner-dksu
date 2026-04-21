@@ -93,19 +93,31 @@ Without an explicit request, `dksu` handles Stage 2 (Clarification & Persona Des
 
 ## Installation
 
-### Option A: Use this standalone repository
+### Register the marketplace
 
-This repository is the standalone plugin bundle.
+Register this repository as a Claude Code marketplace. (One-time setup)
 
-### Option B: Copy to Claude plugins directory
-
-```bash
-cp -r ./dksu-planning-kit "$CLAUDE_PLUGIN_DIR/dksu-planning-kit"
+```
+/plugin marketplace add VYWL/planner-dksu
 ```
 
-### Option C: Publish this repository directly
+### Install the plugin
 
-The bundle is already self-contained. Publish this repository as-is. No external dependencies, no vault references, no global path assumptions.
+Install the plugin from the registered marketplace.
+
+```
+/plugin install dksu-planning-kit@dksu-planning-kit
+/reload-plugins
+```
+
+### Local testing (development)
+
+You can also test locally without the marketplace.
+
+```bash
+git clone https://github.com/VYWL/planner-dksu.git
+claude --plugin-dir ./planner-dksu
+```
 
 ---
 
@@ -148,7 +160,8 @@ A typical session produces:
 ```
 dksu-planning-kit/
 ├── .claude-plugin/
-│   └── plugin.json
+│   ├── plugin.json
+│   └── marketplace.json
 ├── agents/
 │   ├── dksu.md
 │   ├── researcher-dksu.md

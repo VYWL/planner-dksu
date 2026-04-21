@@ -1,0 +1,13 @@
+{
+  "name": "dksu-planning-kit",
+  "owner": {
+    "name": "dksu"
+  },
+  "plugins": [
+    {
+      "name": "dksu-planning-kit",
+      "source": "./",
+      "description": "Planning-only Claude Code plugin for problem framing, reference research, persona design, and task planning."
+    }
+  ]
+}
