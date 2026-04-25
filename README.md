@@ -16,6 +16,7 @@ This plugin handles the "what and why" before any implementation starts: problem
 |---|---|---|
 | `dksu` | Planning orchestrator. Owns the full six-stage planning loop. | Active |
 | `researcher-dksu` | Research specialist. Uses the absorbed insane-search reference layer for surface-aware evidence gathering. | Active |
+| `critical-dksu` | Stage 5 Breadth-Keeper. Planning critic invoked by `dksu` to surface critical gaps, unverified assumptions, and 5W1H holes before Stage 6. Not user-facing; `dksu` calls it internally. | Internal |
 | `designer-dksu` | Product designer. Produces UX specs and design direction. | **Opt-in only** |
 
 ### Skills
@@ -23,6 +24,7 @@ This plugin handles the "what and why" before any implementation starts: problem
 | Skill | When it fires |
 |---|---|
 | `deep-dive` | Problem framing, ambiguity convergence, root-cause chains |
+| `no-more-ambiguity` | Ambiguity Score calculation, stage clarity checks, Final Gate enforcement at Stage 6 |
 | `reference-research` | Comparative evidence, benchmarks, precedent gathering |
 | `persona-scenario` | User modeling, journey mapping, scenario design |
 | `scenario-test` | Validation case definition, coverage matrix closure |
@@ -107,18 +109,44 @@ cp -r ./dksu-planning-kit "$CLAUDE_PLUGIN_DIR/dksu-planning-kit"
 
 The bundle is already self-contained. Publish this repository as-is. No external dependencies, no vault references, no global path assumptions.
 
+### Sync opencode global agents (optional)
+
+Use this only when you want the bundled agents available in opencode's global agent path outside the plugin bundle.
+
+```bash
+./scripts/sync-agents.sh
+```
+
+Manual copy examples:
+
+```bash
+cp ./agents/dksu.md ~/.config/opencode/agents/
+cp ./agents/critical-dksu.md ~/.config/opencode/agents/
+```
+
 ---
 
 ## Usage
 
-Start a planning session by invoking the `dksu` agent:
+### Starting a session with `/plan-dksu`
+
+The `/plan-dksu` command activates `dksu` in Stage 1 Problem Framing mode. It's the fastest way to open a planning session.
+
+```
+/plan-dksu
+/plan-dksu [topic]
+/plan-dksu 새로운 결제 시스템 기획
+/plan-dksu 해커톤 아이디어 검증 도구
+```
+
+If your environment doesn't support slash commands, these phrases work the same way:
 
 ```
 dksu로 기획 시작해줘.
 문제: 해커톤 팀이 아이디어를 빠르게 검증할 수 있는 도구가 없다.
 ```
 
-`dksu` will open Stage 1, ask clarifying questions, and walk through the six-stage loop. It delegates research to `researcher-dksu`, which now chooses surface-specific reference branches before collecting evidence, and, if you request it, design specs to `designer-dksu`.
+`dksu` will open Stage 1, ask clarifying questions, and walk through the six-stage loop. It delegates research to `researcher-dksu`, which chooses surface-specific reference branches before collecting evidence, and, if you request it, design specs to `designer-dksu`.
 
 For a fuller walkthrough, see `EXAMPLE_SESSION.md`.
 
@@ -130,6 +158,34 @@ A typical session produces:
 - A structured requirement spec
 - A validation case set with coverage matrix
 - A decision log with rationale for every key choice
+
+### Planning artifacts: `.dksu/`
+
+All artifacts from a planning session are stored under `.dksu/` in your project root, organized into three directories:
+
+```
+.dksu/
+├── drafts/     # Working documents during each stage
+├── plans/      # Finalized plans after Stage 6 closes; each includes a Seed section
+└── evidence/   # Reference citations and research artifacts from researcher-dksu
+```
+
+A document moves from `drafts/` to `plans/` only after Stage 6 closes and the Final Ambiguity Gate passes. The Seed section is part of the finalized plan document, not a separate file.
+
+### Ambiguity Score and the Final Gate
+
+Planning sessions use the `no-more-ambiguity` skill to track clarity across five dimensions: Goal, Constraint, Success Criteria, Context, and Scope. The skill computes an Ambiguity Score at key stage transitions and enforces a hard gate at Stage 6.
+
+Stage 6 cannot close under normal conditions unless:
+
+1. Final Ambiguity Score is ≤ 0.2
+2. No dimension falls below its floor threshold
+
+If the gate fails, `dksu` returns to the appropriate earlier stage rather than handing off an incomplete plan.
+
+**Explicit user override**: if you say "진행해" or an equivalent override signal after a gate failure, `dksu` may proceed — but only after issuing a warning and recording the unresolved ambiguity under "Known Risks at Handoff" in the decision log. The override must be acknowledged and logged; silent bypass is not allowed.
+
+This is a planning readiness check, not a code or build gate.
 
 ---
 
@@ -152,9 +208,13 @@ dksu-planning-kit/
 ├── agents/
 │   ├── dksu.md
 │   ├── researcher-dksu.md
+│   ├── critical-dksu.md          # internal Stage 5 critic
 │   └── designer-dksu.md          # opt-in
+├── commands/
+│   └── plan-dksu.md              # /plan-dksu command definition
 ├── skills/
 │   ├── deep-dive/
+│   ├── no-more-ambiguity/        # Ambiguity Score and Final Gate
 │   ├── reference-research/
 │   ├── persona-scenario/
 │   └── scenario-test/
@@ -173,6 +233,16 @@ dksu-planning-kit/
 ├── README.ko.md
 ├── EXAMPLE_SESSION.md
 └── LICENSE
+```
+
+At runtime, planning artifacts land in `.dksu/` inside your project (not inside this plugin directory):
+
+```
+your-project/
+└── .dksu/
+    ├── drafts/
+    ├── plans/
+    └── evidence/
 ```
 
 ---

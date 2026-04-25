@@ -32,6 +32,7 @@ This document inventories the plugin-local planning triggers recognized by this 
 | pkit-reference-research-001 | plugin | "레퍼런스 조사", "벤치마크", "reference research", "근거 조사" | phrase | skill | `skills/reference-research/SKILL.md` | `reference-research` | active | `col-001` |
 | pkit-persona-scenario-001 | plugin | "페르소나", "사용자 시나리오", "유저 저니", "persona", "scenario" | phrase | skill | `skills/persona-scenario/SKILL.md` | `persona-scenario` | active | null |
 | pkit-scenario-test-001 | plugin | "테스트 정의", "시나리오 테스트", "커버리지", "validation design" | phrase | skill | `skills/scenario-test/SKILL.md` | `scenario-test` | active | null |
+| pkit-no-more-ambiguity-001 | plugin | "모호성 점수", "명확도 확인", "ambiguity score", "clearance gate", "기획 진행 가능 여부" | phrase | skill | `skills/no-more-ambiguity/SKILL.md` | `no-more-ambiguity` | active | null |
 
 ### Agents
 
@@ -40,6 +41,7 @@ This document inventories the plugin-local planning triggers recognized by this 
 | pkit-dksu-001 | plugin | "기획 정리", "요구사항 구조화", "planning packet" | contextual | agent | `agents/dksu.md` | `dksu` | active | null |
 | pkit-researcher-dksu-001 | plugin | "조사해", "research", "근거 찾아", "reference scan" | contextual | agent | `agents/researcher-dksu.md` | `researcher-dksu` | active | `col-001` |
 | pkit-designer-dksu-001 | plugin | "IA 설계", "화면 구조", "UX spec", "service flow sketch" | contextual | agent | `agents/designer-dksu.md` | `designer-dksu` | active | null |
+| pkit-critical-dksu-001 | plugin | *(internal — invoked by `dksu` at Stage 5 only; no user-facing trigger phrase)* | contextual | agent | `agents/critical-dksu.md` | `critical-dksu` | active | null |
 
 ---
 

@@ -29,8 +29,9 @@ Claude Code용 **기획 OS**입니다. 코딩 플러그인이 아니라, 구현 
 
 | Agent | 역할 | 기본 상태 |
 |---|---|---|
-| `dksu` | planning orchestrator | 활성 |
+| `dksu` | planning orchestrator. 여섯 단계 기획 루프 전체 소유 | 활성 |
 | `researcher-dksu` | insane-search reference layer를 사용하는 근거 기반 조사 specialist | 활성 |
+| `critical-dksu` | Stage 5 Breadth-Keeper. 치명적 누락·미검증 가정·5W1H 취약점·AI-Slop 탐지. `dksu`가 내부 호출; 사용자 직접 호출 불가 | 내부 |
 | `designer-dksu` | UX/흐름/시각 방향 기획 | **opt-in** |
 
 ### Skills
@@ -38,6 +39,7 @@ Claude Code용 **기획 OS**입니다. 코딩 플러그인이 아니라, 구현 
 | Skill | 용도 |
 |---|---|
 | `deep-dive` | 문제 프레이밍, 원인/가정 정리 |
+| `no-more-ambiguity` | 모호성 점수 계산, 단계별 명확도 게이트, Stage 6 Final Gate 강제 |
 | `reference-research` | 레퍼런스 조사, 비교, 추천 |
 | `persona-scenario` | 페르소나, 유저 저니, 시나리오 |
 | `scenario-test` | 테스트 정의, 검증 설계, 커버리지 |
@@ -81,12 +83,14 @@ planning과 research에 필요한 8개 reference 문서를 self-contained 형태
 
 이 plugin은 6단계 planning loop를 가집니다.
 
-1. Problem Framing & Analysis
-2. Clarification & Persona Design
-3. Reference Research
-4. Requirement Structuring
-5. Task Plan & Validation Design
-6. Decision Log
+| 단계 | 이름 | 주요 산출물 |
+|------|------|------------|
+| 1 | Problem Framing & Analysis | 문제 정의, 범위 맵, 가정, 미지 항목 |
+| 2 | Clarification & Persona Design | 모호성 해소 결정, 페르소나, 시나리오 개요 |
+| 3 | Reference Research | 근거 기반 비교 분석, 레퍼런스 요약 |
+| 4 | Requirement Structuring | 요구사항 명세, 수용 기준, 의존성 |
+| 5 | Task Plan & Validation Design | 태스크 계획, 검증 케이스, 커버리지 매트릭스 |
+| 6 | Decision Log | 의사결정 기록, 미해결 리스크, 이관 항목 |
 
 여기서 종료합니다. 구현·런타임 검증·배포는 이 plugin 범위 밖입니다.
 
@@ -94,7 +98,7 @@ planning과 research에 필요한 8개 reference 문서를 self-contained 형태
 
 ## designer-dksu는 opt-in
 
-`designer-dksu`는 **기본 비활성**입니다.
+`designer-dksu`는 **기본 비활성**입니다. 자동으로 활성화되지 않습니다.
 아래처럼 명시적으로 요청할 때만 사용합니다.
 
 ```text
@@ -118,16 +122,76 @@ designer-dksu로 UX 명세 작성해줘
 cp -r ./dksu-planning-kit "$CLAUDE_PLUGIN_DIR/dksu-planning-kit"
 ```
 
-### 2. 시작 예시
+### 2. opencode 전역 에이전트 동기화 (선택)
 
-```text
+번들 에이전트를 opencode 전역 에이전트 경로에서도 사용하려면:
+
+```bash
+./scripts/sync-agents.sh
+```
+
+수동 복사 예시:
+
+```bash
+cp ./agents/dksu.md ~/.config/opencode/agents/
+cp ./agents/critical-dksu.md ~/.config/opencode/agents/
+```
+
+### 3. `/plan-dksu`로 세션 시작
+
+`/plan-dksu` 커맨드는 `dksu`를 Stage 1 Problem Framing 모드로 활성화합니다.
+
+```
+/plan-dksu
+/plan-dksu [topic]
+/plan-dksu 새로운 결제 시스템 기획
+/plan-dksu 해커톤 아이디어 검증 도구
+```
+
+슬래시 커맨드가 지원되지 않는 환경에서는 아래 문장으로 동일하게 시작할 수 있습니다.
+
+```
 dksu로 기획 시작해줘.
 문제: 해커톤 팀이 아이디어를 빠르게 검증할 수 있는 도구가 없다.
 ```
 
-### 3. 예시 세션 보기
+### 4. 예시 세션 보기
 
 `EXAMPLE_SESSION.md` 참고
+
+---
+
+## 기획 산출물: `.dksu/`
+
+기획 세션 중 생성된 산출물은 프로젝트 루트의 `.dksu/` 아래 세 폴더로 구분됩니다.
+
+```
+.dksu/
+├── drafts/     # 각 단계에서 작업 중인 문서 (문제 정의, 페르소나, 요구사항 초안 등)
+├── plans/      # Stage 6 완료 후 확정된 기획 문서 (Seed 섹션 포함)
+└── evidence/   # researcher-dksu가 수집한 레퍼런스 인용, 비교 분석 결과
+```
+
+- **`drafts/`** — 각 단계에서 작성 중인 작업 문서를 보관합니다.
+- **`plans/`** — Stage 6 완료 후 확정된 기획 문서를 저장합니다. 확정 플랜에는 핵심 전제와 범위를 요약한 Seed 섹션이 포함됩니다. Seed는 별도 파일이 아닌 플랜 문서 내 섹션입니다.
+- **`evidence/`** — `researcher-dksu`가 수집한 레퍼런스 인용, 비교 분석 결과, 리서치 아티팩트를 저장합니다.
+
+---
+
+## 모호성 점수와 Final Gate
+
+기획 세션은 `no-more-ambiguity` 스킬을 사용해 다섯 차원(Goal, Constraint, Success Criteria, Context, Scope)에 걸쳐 명확도를 추적합니다. 스킬은 주요 단계 전환 시 Ambiguity Score를 계산하고, Stage 6에서 하드 게이트를 강제합니다.
+
+Stage 6은 아래 두 조건이 모두 충족될 때만 닫힙니다.
+
+1. Final Ambiguity Score ≤ 0.2 (공식: `1 - Σ(clarity_i × weight_i)`)
+2. 어떤 차원도 floor threshold 아래로 내려가지 않음
+
+게이트가 실패하면 `dksu`는 해당 단계로 돌아가 미해결 항목을 보완합니다.
+
+**명시적 사용자 오버라이드**: 게이트 실패 후 "진행해" 또는 동등한 오버라이드 신호를 입력하면, `dksu`는 진행할 수 있습니다. 단, 반드시 경고를 발행하고 미해결 모호성을 의사결정 로그의 "Known Risks at Handoff" 항목에 기록해야 합니다. 오버라이드는 반드시 인지되고 로그에 남겨야 하며, 무언의 우회(silent bypass)는 허용되지 않습니다.
+
+이것은 기획 준비 상태 확인이며, 코드나 빌드 게이트가 아닙니다.
 
 ---
 
@@ -138,14 +202,45 @@ dksu-planning-kit/
 ├── .claude-plugin/
 │   └── plugin.json
 ├── agents/
+│   ├── dksu.md
+│   ├── researcher-dksu.md
+│   ├── critical-dksu.md          # 내부 Stage 5 비평가
+│   └── designer-dksu.md          # opt-in
+├── commands/
+│   └── plan-dksu.md              # /plan-dksu 커맨드 정의
 ├── skills/
+│   ├── deep-dive/
+│   ├── no-more-ambiguity/        # 모호성 점수 및 Final Gate
+│   ├── reference-research/
+│   ├── persona-scenario/
+│   └── scenario-test/
 ├── governance/
+│   ├── planning-workflow.md
+│   ├── conventions.md
+│   ├── trigger-registry.md
+│   ├── resolver-table.md
+│   ├── skill-registry.md
+│   └── agent-skill-matrix.md
 ├── templates/
+│   └── (8개 기획 템플릿)
 ├── references/
+│   └── (8개 레퍼런스 문서)
+├── scripts/
+│   └── sync-agents.sh
 ├── README.md
 ├── README.ko.md
 ├── EXAMPLE_SESSION.md
 └── LICENSE
+```
+
+런타임 기획 산출물은 플러그인 디렉터리가 아닌 프로젝트 루트의 `.dksu/`에 저장됩니다.
+
+```
+your-project/
+└── .dksu/
+    ├── drafts/
+    ├── plans/
+    └── evidence/
 ```
 
 ---

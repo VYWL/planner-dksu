@@ -29,6 +29,7 @@ This document stores the plugin-local planning skill inventory for this bundle: 
 | `reference-research` | plugin | planning-kit | active | Collect and synthesize evidence, precedents, and benchmark signals for planning decisions. | 3 | skill-description + trigger-registry | Must not own persona design or validation design. |
 | `persona-scenario` | plugin | planning-kit | active | Define target personas, journeys, and scenario paths that shape planning outputs. | 2 | skill-description + trigger-registry | Must not replace requirement structuring or task decomposition. |
 | `scenario-test` | plugin | planning-kit | active | Design validation cases and coverage logic for the planned work. | 5 | skill-description + trigger-registry | Must not take over root-cause analysis or reference gathering. |
+| `no-more-ambiguity` | plugin | planning-kit | active | Calculate Ambiguity Score across five clarity dimensions and enforce stage advancement gates and the Final Gate at Stage 6. | 1, 2, 4, 6 | skill-description + trigger-registry | Must not be used as a code review or implementation verification tool; applies to pre-code planning only. Must not be invoked by researcher-dksu, designer-dksu, or critical-dksu. |
 
 ---
 

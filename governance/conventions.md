@@ -16,6 +16,7 @@ This document defines cross-cutting rules that apply across the full planning wo
 | PL-04 | The same fact lives in one governance document only. | Drift across duplicated rules |
 | PL-05 | Failures must be reported directly. | False confidence from silent misses |
 | PL-06 | Roles and names must not overlap. | Ambiguous ownership between agent, skill, requirement, and task labels |
+| PL-07 | Stage 6 cannot close unless the Final Ambiguity Score is ≤ 0.2 and all five dimension floors pass. | Handing off a plan that carries unresolved ambiguity into implementation |
 
 ---
 
@@ -78,6 +79,43 @@ Governance documents inside this plugin must stand alone.
 - Do not depend on outside path conventions.
 - Do not reference external owners as a prerequisite for understanding the rule.
 
+### CONV-008 — Ambiguity Gate (PL-07 Enforcement)
+
+Stage 6 carries a mandatory readiness gate before the plan can be handed off. This is a planning readiness check, not a code or build gate.
+
+**Verification method**: run the `no-more-ambiguity` skill. Score all five clarity dimensions and compute the Final Ambiguity Score using the formula `1 - Σ(clarity_i × weight_i)`.
+
+**Pass conditions** (both must hold):
+
+1. Final Ambiguity Score ≤ 0.2
+2. No dimension falls below its floor threshold (Goal 0.75, Constraint 0.65, Success Criteria 0.70, Context 0.60, Scope 0.65)
+
+**Failure behavior**: if either condition fails, Stage 6 does not close. Return to the appropriate earlier stage:
+
+- Goal or Context floor failure → return to Stage 1 (Problem Framing)
+- Scope floor failure → return to Stage 2 (Clarification)
+- Constraint or Success Criteria floor failure → return to Stage 4 (Requirement Structuring)
+- Overall score too high with all floors passing → address the weakest dimensions before re-scoring
+
+**Score recording**: the Ambiguity Score Report must be recorded in the Stage 6 planning artifact before the gate is considered evaluated.
+
+**User override**: if the gate fails but the user explicitly says "진행해" or an equivalent override signal, continue with a warning. Record the unresolved ambiguity in the decision log under "Known Risks at Handoff". Do not silently proceed; the override must be acknowledged and logged.
+
+### CONV-009 — Planning Artifact Paths
+
+Planning session artifacts are stored under `.dksu/` in the project root, organized into three directories:
+
+```
+.dksu/
+├── drafts/     # Working documents during each stage (problem definition, personas, requirement drafts)
+├── plans/      # Finalized planning documents after Stage 6 closes; each plan includes a Seed section
+└── evidence/   # Reference citations, research artifacts, and comparative findings from researcher-dksu
+```
+
+- A document moves from `drafts/` to `plans/` only after Stage 6 closes and PL-07 passes (or an override is logged).
+- `evidence/` files are owned by `researcher-dksu` and must not be edited by other agents.
+- Do not create subdirectories inside these three folders without a documented reason in the decision log.
+
 ---
 
 ## Enforcement Style
@@ -96,6 +134,7 @@ Governance documents inside this plugin must stand alone.
 | PL-04 | Audit |
 | PL-05 | Soft |
 | PL-06 | Hard |
+| PL-07 | Hard |
 
 ---
 
