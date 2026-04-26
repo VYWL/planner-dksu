@@ -137,7 +137,25 @@ cp ./agents/dksu.md ~/.config/opencode/agents/
 cp ./agents/critical-dksu.md ~/.config/opencode/agents/
 ```
 
-### 3. `/plan-dksu`로 세션 시작
+### 3. Claude Code 전역 커맨드 동기화 (`/plan-dksu` 필수)
+
+Claude Code는 `~/.claude/commands/`에서 슬래시 커맨드를 검색합니다. 플러그인 커맨드 자동 검색이 활성화되지 않은 환경에서는 커맨드 파일을 직접 복사해야 `/plan-dksu`가 커맨드 팔레트에 나타납니다.
+
+```bash
+./scripts/sync-commands.sh
+```
+
+이 스크립트는 `commands/plan-dksu.md`를 `~/.claude/commands/plan-dksu.md`로 복사합니다. 실행 후 Claude Code 세션을 재시작하거나 리로드해야 커맨드 팔레트가 갱신됩니다.
+
+수동 복사:
+
+```bash
+cp ./commands/plan-dksu.md ~/.claude/commands/plan-dksu.md
+```
+
+에이전트 동기화(`sync-agents.sh`)와 커맨드 동기화(`sync-commands.sh`)는 별개 작업입니다. 사용하는 도구에 따라 하나 또는 둘 다 실행하면 됩니다.
+
+### 4. `/plan-dksu`로 세션 시작
 
 `/plan-dksu` 커맨드는 `dksu`를 Stage 1 Problem Framing 모드로 활성화합니다.
 
@@ -155,7 +173,7 @@ dksu로 기획 시작해줘.
 문제: 해커톤 팀이 아이디어를 빠르게 검증할 수 있는 도구가 없다.
 ```
 
-### 4. 예시 세션 보기
+### 5. 예시 세션 보기
 
 `EXAMPLE_SESSION.md` 참고
 
@@ -226,7 +244,8 @@ dksu-planning-kit/
 ├── references/
 │   └── (8개 레퍼런스 문서)
 ├── scripts/
-│   └── sync-agents.sh
+│   ├── sync-agents.sh            # opencode 전역 에이전트 동기화
+│   └── sync-commands.sh          # Claude Code 전역 커맨드 동기화
 ├── README.md
 ├── README.ko.md
 ├── EXAMPLE_SESSION.md

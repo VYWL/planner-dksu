@@ -124,6 +124,24 @@ cp ./agents/dksu.md ~/.config/opencode/agents/
 cp ./agents/critical-dksu.md ~/.config/opencode/agents/
 ```
 
+### Sync Claude Code global commands (required for `/plan-dksu`)
+
+Claude Code discovers slash commands from `~/.claude/commands/`. If plugin command discovery is not active in your setup, `/plan-dksu` won't appear in the command palette until you copy the command file there.
+
+```bash
+./scripts/sync-commands.sh
+```
+
+This copies `commands/plan-dksu.md` to `~/.claude/commands/plan-dksu.md`. After running it, restart or reload your Claude Code session so the command palette picks up the change.
+
+Manual copy:
+
+```bash
+cp ./commands/plan-dksu.md ~/.claude/commands/plan-dksu.md
+```
+
+Agent sync (`sync-agents.sh`) and command sync (`sync-commands.sh`) are separate operations. You can run either or both depending on which tools you use.
+
 ---
 
 ## Usage
@@ -229,6 +247,9 @@ dksu-planning-kit/
 │   └── (8 planning templates)
 ├── references/
 │   └── (8 reference documents)
+├── scripts/
+│   ├── sync-agents.sh            # sync bundled agents to opencode global path
+│   └── sync-commands.sh          # sync /plan-dksu to Claude Code global commands
 ├── README.md
 ├── README.ko.md
 ├── EXAMPLE_SESSION.md
