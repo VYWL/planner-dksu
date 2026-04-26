@@ -112,6 +112,49 @@ designer-dksu로 UX 명세 작성해줘
 
 ## 설치 / 사용
 
+### 에이전트 직접 실행 설치
+
+AI 에이전트가 "dksu 설치해줘" 또는 "install dksu-planning-kit" 요청을 받아 이 README를 읽고 있다면, 아래 블록을 그대로 실행하면 됩니다. 사람의 개입 없이 완료됩니다.
+
+**전제 조건:** 레포가 로컬에 클론되어 있어야 합니다. 없다면 먼저 클론하세요.
+
+```bash
+git clone https://github.com/dksu/dksu-planning-kit.git
+cd dksu-planning-kit
+```
+
+**설치:**
+
+```bash
+# 레포 루트에서 실행
+bash ./scripts/sync-agents.sh && bash ./scripts/sync-commands.sh
+```
+
+설치되는 파일:
+
+| 파일 | 설치 경로 |
+|---|---|
+| `agents/dksu.md` | `~/.config/opencode/agents/dksu.md` |
+| `agents/researcher-dksu.md` | `~/.config/opencode/agents/researcher-dksu.md` |
+| `agents/designer-dksu.md` | `~/.config/opencode/agents/designer-dksu.md` |
+| `agents/critical-dksu.md` | `~/.config/opencode/agents/critical-dksu.md` |
+| `commands/plan-dksu.md` | `~/.claude/commands/plan-dksu.md` |
+
+**설치 확인:**
+
+```bash
+ls ~/.config/opencode/agents/dksu.md && \
+ls ~/.config/opencode/agents/researcher-dksu.md && \
+ls ~/.claude/commands/plan-dksu.md && \
+echo "설치 완료."
+```
+
+세 파일이 모두 존재하면 마지막에 `설치 완료.`가 출력됩니다.
+
+**설치 후:** Claude Code 세션을 재시작해야 합니다. 세션을 리로드하기 전까지 `/plan-dksu`가 커맨드 팔레트에 나타나지 않습니다.
+
+---
+
 ### 1. 현재 standalone repo로 사용
 
 이 repo 자체가 standalone plugin repo입니다.

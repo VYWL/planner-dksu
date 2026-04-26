@@ -95,6 +95,49 @@ Without an explicit request, `dksu` handles Stage 2 (Clarification & Persona Des
 
 ## Installation
 
+### Quick install (agent-executable)
+
+If you're an AI agent reading this to fulfill a request like "install dksu-planning-kit" or "dksu 설치해줘", run the following block directly. No interaction required.
+
+**Prerequisite:** the repo must already be cloned locally. If it isn't, clone it first:
+
+```bash
+git clone https://github.com/dksu/dksu-planning-kit.git
+cd dksu-planning-kit
+```
+
+**Install:**
+
+```bash
+# Run from the repo root
+bash ./scripts/sync-agents.sh && bash ./scripts/sync-commands.sh
+```
+
+This installs:
+
+| File | Destination |
+|---|---|
+| `agents/dksu.md` | `~/.config/opencode/agents/dksu.md` |
+| `agents/researcher-dksu.md` | `~/.config/opencode/agents/researcher-dksu.md` |
+| `agents/designer-dksu.md` | `~/.config/opencode/agents/designer-dksu.md` |
+| `agents/critical-dksu.md` | `~/.config/opencode/agents/critical-dksu.md` |
+| `commands/plan-dksu.md` | `~/.claude/commands/plan-dksu.md` |
+
+**Verify:**
+
+```bash
+ls ~/.config/opencode/agents/dksu.md && \
+ls ~/.config/opencode/agents/researcher-dksu.md && \
+ls ~/.claude/commands/plan-dksu.md && \
+echo "Install verified."
+```
+
+If all three files exist, the output ends with `Install verified.`
+
+**After install:** restart the Claude Code session. The `/plan-dksu` command won't appear in the command palette until the session reloads.
+
+---
+
 ### Option A: Use this standalone repository
 
 This repository is the standalone plugin bundle.
